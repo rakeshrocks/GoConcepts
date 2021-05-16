@@ -1,0 +1,94 @@
+package main
+
+import (
+	"fmt"
+        "os"
+)
+
+type Stack []*BNode
+
+func (s *Stack) isStackEmpty() bool {
+	return len(*s) == 0
+}
+
+func (s *Stack) push(value *BNode) {
+	*s = append(*s, value)
+}
+
+func (s *Stack) pop() (*BNode, bool) {
+	if s.isStackEmpty() {
+		return nil, false
+	} else {
+		i := len(*s) - 1
+		node := (*s)[i]
+		*s = (*s)[:i]
+		return node, true
+	}
+}
+
+// stack ends 
+type BNode struct {
+	left *BNode
+	right *BNode
+	data int64
+}
+
+
+
+
+func insertLeftRight(root *BNode, data int64) {
+    if data <= root.data {
+        if root.left == nil {
+            root.left = &BNode{data: data, left: nil, right: nil}
+        } else {
+            insertLeftRight(root.left, data)
+        }
+    } else {
+        if root.right == nil {
+            root.right = &BNode{data: data, left: nil, right: nil}
+        } else {
+            insertLeftRight(root.right, data)
+        }
+    }   
+}
+
+func print (node *BNode, space int, ch rune) {
+	if node == nil {
+		return
+	}
+	w := os.Stdout
+	for i :=0; i < space; i++ {
+	    fmt.Fprint(w, " ")
+	}
+	fmt.Fprintf(w, "%c:%v\n", ch, node.data)
+	print(node.left, space + 2, 'L')
+	print(node.right, space +2, 'R')
+}
+
+func nonRecursive(root *BNode) {
+	var stack Stack
+	for ;; {
+		for ;root != nil; {
+		    println(root.data)
+		    stack.push(root)
+		    root = root.left
+		}
+		if stack.isStackEmpty() {
+			break
+		}
+		root, _ = stack.pop()
+		root = root.right
+	}
+}
+
+func main() {
+
+	
+	root := &BNode{data: 100, left: nil, right: nil}
+	insertLeftRight(root, 20)
+	insertLeftRight(root, 200)
+	insertLeftRight(root, 10)
+	print(root, 0, 'T')
+	nonRecursive(root)
+	
+}
